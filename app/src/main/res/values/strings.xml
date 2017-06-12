@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">BakingTime</string>
+    <string name="nutella_pie">Nutella Pie</string>
+    <string name="brownies">Brownies</string>
+    <string name="yellowcake">Yellow Cake</string>
+    <string name="cheesecake">Cheese Cake</string>
+    <string name="ingredients">INGREDIENTS</string>
+    <string name="no_video">NO VIDEO</string>
+    <string name="steps">STEPS</string>
+
+</resources>
