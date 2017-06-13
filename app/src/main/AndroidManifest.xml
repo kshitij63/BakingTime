@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.user.bakingtime">
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -19,7 +20,17 @@
         </activity>
         <activity android:name=".SingleRecepieActivity" />
         <activity android:name=".IngredientActivity" />
-        <activity android:name=".StepDetailActivity"></activity>
+        <activity android:name=".StepDetailActivity" />
+
+        <receiver android:name=".RecepieWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/recepie_widget_provider_info" />
+        </receiver>
     </application>
 
 </manifest>

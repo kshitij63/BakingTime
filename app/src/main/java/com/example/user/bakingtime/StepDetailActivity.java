@@ -31,7 +31,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
 public class StepDetailActivity extends AppCompatActivity {
-String videoURL,deatil_description;
+String videoURL,deatil_description,thumbnail;
        @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,10 +39,8 @@ String videoURL,deatil_description;
         Bundle bundle=getIntent().getExtras();
         videoURL=bundle.getString("videoURL");
         deatil_description=bundle.getString("description");
+           thumbnail=bundle.getString("thumb");
            StepDetailFragment fragment=new StepDetailFragment();
-          // Bundle bundle1=new Bundle();
-           //bundle.putString("videoURL",videoURL);
-           //bundle.putString("description",deatil_description);
            fragment.setArguments(bundle);
 
            FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();

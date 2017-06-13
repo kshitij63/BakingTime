@@ -1,6 +1,7 @@
 package com.example.user.bakingtime;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,8 +12,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,249 +40,172 @@ public class SingleRecepieFragment extends Fragment {
 
 
     ListView listView;
+ProgressBar bar;
     boolean from_tab;
-    int type;
-    StepsAdapter adapter;
+    String type;
     ArrayList<String> steps_list;
     ArrayList<String> Ingredeint_list;
     TextView textView;
     StepSelected stepSelected;
+    String videoURL;
+    String description;
+    String thumbnail;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v=LayoutInflater.from(getActivity()).inflate(R.layout.single_recepie_fragment,container,false);
-        type=getArguments().getInt("type");
+        type=getArguments().getString("type");
+        bar=(ProgressBar) v.findViewById(R.id.bar);
         from_tab=getArguments().getBoolean("fromtab");
-        //Toast.makeText(getActivity(), from_tab +"",Toast.LENGTH_SHORT).show();
+
         steps_list=new ArrayList<>();
         Ingredeint_list=new ArrayList<>();
         listView=(ListView) v.findViewById(R.id.step_list);
+        make_network_call(getActivity());
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        //        Toast.makeText(getActivity(),"yeah",Toast.LENGTH_SHORT).show();
-                Intent intent=new Intent(getContext(),StepDetailActivity.class);
-
-                try {
-                    if(type==101) {
-                        JSONArray receipiearray = new JSONArray(loadJSONFromAsset());
-                        JSONObject object1 = receipiearray.getJSONObject(0);
-                        JSONArray arr=object1.getJSONArray("steps");
-                        JSONObject object=arr.getJSONObject(position);
-                        if(from_tab)
-                        stepSelected.onstepselected(position);
-                        else {
-          //                  Toast.makeText(getActivity(),"`inelse",Toast.LENGTH_SHORT).show();
-                            intent.putExtra("description", object.getString("description"));
-                            intent.putExtra("videoURL", object.getString("videoURL"));
-                            getContext().startActivity(intent);
-
-                            Log.e("yeahhhh", object.getString("description") + " " + object.getString("videoURL"));
-                        }
-                    }
-                    else if(type==102) {
-                        JSONArray receipiearray = new JSONArray(loadJSONFromAsset());
-                        JSONObject object1 = receipiearray.getJSONObject(1);
-                        JSONArray arr=object1.getJSONArray("steps");
-                        JSONObject object=arr.getJSONObject(position);
-
-                        if (from_tab)
-                        stepSelected.onstepselected(position);
-else {
-                            intent.putExtra("description", object.getString("description"));
-                            intent.putExtra("videoURL", object.getString("videoURL"));
-                            getContext().startActivity(intent);
-
-                            Log.e("yeahhhh", object.getString("description") + " " + object.getString("videoURL"));
-                        }
-                    }
-                    else if(type==103) {
-                        JSONArray receipiearray = new JSONArray(loadJSONFromAsset());
-                        JSONObject object1 = receipiearray.getJSONObject(2);
-                        JSONArray arr=object1.getJSONArray("steps");
-                        JSONObject object=arr.getJSONObject(position);
-if(from_tab)
-                        stepSelected.onstepselected(position);
-            else {
-    intent.putExtra("description", object.getString("description"));
-    intent.putExtra("videoURL", object.getString("videoURL"));
-    getContext().startActivity(intent);
-
-    Log.e("yeahhhh", object.getString("description") + " " + object.getString("videoURL"));
+if(from_tab==true){
+    stepSelected.onstepselected(position);
 }
-                    }
-                    else if(type==104) {
-                        JSONArray receipiearray = new JSONArray(loadJSONFromAsset());
-                        JSONObject object1 = receipiearray.getJSONObject(3);
-                        JSONArray arr=object1.getJSONArray("steps");
-                        JSONObject object=arr.getJSONObject(position);
-if(from_tab)
-                        stepSelected.onstepselected(position);
-else {
-    intent.putExtra("description", object.getString("description"));
-    intent.putExtra("videoURL", object.getString("videoURL"));
-    getContext().startActivity(intent);
+else{
+    Toast.makeText(getActivity(),"inelse " +position,Toast.LENGTH_LONG).show();
+    makeNetworkcall2(position);
 
-    Log.e("yeahhhh", object.getString("description") + " " + object.getString("videoURL"));
+
 }
-                    }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-        });
+            }});
         textView=(TextView) v.findViewById(R.id.ingre_textview);
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent=new Intent(getActivity(),IngredientActivity.class);
-                try {
-                    JSONArray receipiearray=new JSONArray(loadJSONFromAsset());
-                    if(type==101){
-                        JSONObject object1 = receipiearray.getJSONObject(0);
-
-                        JSONArray steps_array = object1.getJSONArray("ingredients");
-                        for(int i=0;i<steps_array.length();i++){
-                            JSONObject object=steps_array.getJSONObject(i);
-                            String ingre=object.getString("quantity") +" "+object.getString("measure") +" of " +object.getString("ingredient");
-                            Ingredeint_list.add(ingre);
-                        }
-                        intent.putStringArrayListExtra("list",Ingredeint_list);
-                        startActivity(intent);
-
-                    }
-                    else if(type==102){
-                        JSONObject object1 = receipiearray.getJSONObject(1);
-
-                        JSONArray steps_array = object1.getJSONArray("ingredients");
-                        for(int i=0;i<steps_array.length();i++){
-                            JSONObject object=steps_array.getJSONObject(i);
-                            String ingre=object.getString("quantity") +" "+object.getString("measure") +" of " +object.getString("ingredient");
-                            Ingredeint_list.add(ingre);
-                        }
-                        intent.putStringArrayListExtra("list",Ingredeint_list);
-                        startActivity(intent);
-
-                    }
-                    else if(type==103){
-                        JSONObject object1 = receipiearray.getJSONObject(2);
-
-                        JSONArray steps_array = object1.getJSONArray("ingredients");
-                        for(int i=0;i<steps_array.length();i++){
-                            JSONObject object=steps_array.getJSONObject(i);
-                            String ingre=object.getString("quantity") +" "+object.getString("measure") +" of " +object.getString("ingredient");
-                            Ingredeint_list.add(ingre);
-                        }
-                        intent.putStringArrayListExtra("list",Ingredeint_list);
-                        startActivity(intent);
-
-                    }
-                    else if(type==104){
-                        JSONObject object1 = receipiearray.getJSONObject(3);
-
-                        JSONArray steps_array = object1.getJSONArray("ingredients");
-                        for(int i=0;i<steps_array.length();i++){
-                            JSONObject object=steps_array.getJSONObject(i);
-                            String ingre=object.getString("quantity") +" "+object.getString("measure") +" of " +object.getString("ingredient");
-                            Ingredeint_list.add(ingre);
-                        }
-                        intent.putStringArrayListExtra("list",Ingredeint_list);
-                        startActivity(intent);
-
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
+                intent.putExtra("id",type);
+                startActivity(intent);
             }
         });
-        try {
-            JSONArray receipiearray=new JSONArray(loadJSONFromAsset());
-            //int lenght=receipiearray.length();
-            if(type==101) {
-                JSONObject object1 = receipiearray.getJSONObject(0);
-                JSONArray steps_array = object1.getJSONArray("steps");
-                for (int i = 0; i < steps_array.length(); i++) {
 
-                    JSONObject ob = steps_array.getJSONObject(i);
-                    String step = ob.getString("shortDescription");
-                    steps_list.add(step);
-                }
-
-            }
-            else   if(type==102) {
-                JSONObject object1 = receipiearray.getJSONObject(1);
-                JSONArray steps_array = object1.getJSONArray("steps");
-                for (int i = 0; i < steps_array.length(); i++) {
-
-                    JSONObject ob = steps_array.getJSONObject(i);
-                    String step = ob.getString("shortDescription");
-                    steps_list.add(step);
-                }
-            }
-            else       if(type==103) {
-                JSONObject object1 = receipiearray.getJSONObject(2);
-                JSONArray steps_array = object1.getJSONArray("steps");
-                for (int i = 0; i < steps_array.length(); i++) {
-
-                    JSONObject ob = steps_array.getJSONObject(i);
-                    String step = ob.getString("shortDescription");
-                    steps_list.add(step);
-
-                }
-            }
-            else           if(type==104) {
-                JSONObject object1 = receipiearray.getJSONObject(3);
-                JSONArray steps_array=object1.getJSONArray("steps");
-                for(int i=0;i<steps_array.length();i++){
-
-                    JSONObject ob=steps_array.getJSONObject(i);
-                    String step=ob.getString("shortDescription");
-                    steps_list.add(step);
-                }
-
-            }
-
-
-            listView.setAdapter(new StepsAdapter(getActivity(),steps_list,type,loadJSONFromAsset()));
-            //Log.e("name",object1.getString("name"));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
 
         return v;
     }
+    public void make_network_call(Context context) {
+        bar.setVisibility(View.VISIBLE);
 
-    public String loadJSONFromAsset() {
-        String json = null;
-        try {
+        final RequestQueue queue = Volley.newRequestQueue(context);
+        StringRequest request = new StringRequest(Request.Method.GET, NetworkUtils.RECIPIE_API, new Response.Listener<String>() {
+            @Override
+            public void onResponse(final String response) {
+                bar.setVisibility(View.INVISIBLE);
+                try {
+                    JSONArray array=new JSONArray(response);
+                    for(int i=0;i<array.length();i++){
+                        JSONObject object=array.getJSONObject(i);
+                        String id=String.valueOf(object.getLong("id"));
+                        if(type.equals(id)){
+                            JSONArray steps=object.getJSONArray("steps");
+                            JSONArray ingre=object.getJSONArray("ingredients");
+                            for(int j=0;j<steps.length();j++){
+                                JSONObject object1=steps.getJSONObject(j);
+                                String des=object1.getString("shortDescription");
+steps_list.add(des);
+                            }
+                            listView.setAdapter(new StepsAdapter(getActivity(),steps_list));
 
-            InputStream is = getActivity().getAssets().open("generated.json");
+                        }
+                    }
 
-            int size = is.available();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                queue.stop();
+            }
 
-            byte[] buffer = new byte[size];
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+               bar.setVisibility(View.INVISIBLE);
+                Toast.makeText(getActivity(),"error",Toast.LENGTH_SHORT).show();
 
-            is.read(buffer);
+                queue.stop();
+            }
+        });
+        queue.add(request);
+    }
+    public  void makeNetworkcall2(final int position){
 
-            is.close();
+        bar
+                .setVisibility(View.VISIBLE);
+        final RequestQueue queue = Volley.newRequestQueue(getActivity());
+        StringRequest request = new StringRequest(Request.Method.GET, NetworkUtils.RECIPIE_API, new Response.Listener<String>() {
+            @Override
+            public void onResponse(final String response) {
+                bar.setVisibility(View.INVISIBLE);
+                try {
+                    JSONArray array=new JSONArray(response);
+                    for(int i=0;i<array.length();i++){
+                        JSONObject object=array.getJSONObject(i);
+                        String id=String.valueOf(object.getLong("id"));
+                        if(type.equals(id)){
+                            Toast.makeText(getActivity(),"got " +type,Toast.LENGTH_LONG).show();
 
-            json = new String(buffer, "UTF-8");
+                            JSONArray steps=object.getJSONArray("steps");
+                            //JSONArray ingre=object.getJSONArray("ingredients");
+                            for(int j=0;j<steps.length();j++){
+                                if(j==position) {
+                                    Toast.makeText(getActivity(),"gotkk " +position +j,Toast.LENGTH_LONG).show();
+
+                                    JSONObject object1=steps.getJSONObject(position);
+                                    videoURL=object1.getString("videoURL");
+                                    description=object1.getString("description");
+                                    thumbnail=object.getString("thumbnailURL");
+                                }
+                            }
 
 
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
+
+                            }
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Intent intent=new Intent(getActivity(),StepDetailActivity.class);
+
+                intent.putExtra("videoURL",videoURL);
+                intent.putExtra("description",description);
+                intent.putExtra("thumb",thumbnail);
+                startActivity(intent);
+
+                queue.stop();
+            }
+
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                bar.setVisibility(View.INVISIBLE);
+                Toast.makeText(getActivity(),"error",Toast.LENGTH_SHORT).show();
+
+                queue.stop();
+            }
+        });
+        queue.add(request);
 
     }
+
+
+
+
+
+
+
+
+
+
+
 
     public interface StepSelected{
         void onstepselected(int position);

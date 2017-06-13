@@ -1,5 +1,7 @@
 package com.example.user.bakingtime;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,6 +33,10 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
+import java.io.IOException;
 
 /**
  * Created by user on 6/12/2017.
@@ -42,9 +48,8 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     PlaybackStateCompat.Builder playbackStateCompat;
     int savedplayback;
     SimpleExoPlayer simpleExoPlayer;
-    TextView textView,no_view;
-    int position;
-    String videoURL,deatil_description;
+    TextView textView;
+    String videoURL,deatil_description,thumbnail;
 
     @Nullable
     @Override
@@ -55,16 +60,42 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
 //        Toast.makeText(getActivity(), "trtrtr", Toast.LENGTH_SHORT).show();
         videoURL=getArguments().getString("videoURL");
         deatil_description=getArguments().getString("description");
+        thumbnail=getArguments().getString("thumb");
 
-       // Toast.makeText(getActivity(),videoURL +" " +deatil_description,Toast.LENGTH_SHORT).show();
+
+
         textView=(TextView) v.findViewById(R.id.detail);
-        no_view=(TextView) v.findViewById(R.id.no_video);
+
         textView.setText(deatil_description);
         if(videoURL!=null){
             Uri videouri=Uri.parse(videoURL);
 
-            no_view.setVisibility(View.INVISIBLE);
+
             simpleExoPlayerView=(SimpleExoPlayerView) v.findViewById(R.id.exoplayer_view);
+            if(thumbnail!=null) {
+
+                    Picasso.with(getActivity()).load(thumbnail).into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            simpleExoPlayerView.setDefaultArtwork(bitmap);
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                        }
+
+                    });
+
+
+
+            }
+
             TrackSelector trackSelector=new DefaultTrackSelector();
             LoadControl loadControl=new DefaultLoadControl();
 compat=new MediaSessionCompat(getActivity(),"mediasession_bake");
@@ -75,7 +106,6 @@ compat=new MediaSessionCompat(getActivity(),"mediasession_bake");
             compat.setCallback(new mySessionCallback());
             compat.setActive(true);
             simpleExoPlayer= ExoPlayerFactory.newSimpleInstance(getActivity(),trackSelector,loadControl);
-
             simpleExoPlayerView.setPlayer(simpleExoPlayer);
 
             String useragent= Util.getUserAgent(getActivity(),"BakingTime");
@@ -88,7 +118,7 @@ compat=new MediaSessionCompat(getActivity(),"mediasession_bake");
 
         }
         else {
-            no_view.setVisibility(View.VISIBLE);
+
             Toast.makeText(getActivity(),"no video",Toast.LENGTH_SHORT).show();
         }
 
@@ -165,9 +195,7 @@ compat=new MediaSessionCompat(getActivity(),"mediasession_bake");
         simpleExoPlayer=null;
     }
 
-    //public void gettingPosition(int position){
-      //  this.position=position;
-    //}
+
 
     @Override
     public void onDestroyView() {

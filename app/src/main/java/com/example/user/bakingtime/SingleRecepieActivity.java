@@ -1,6 +1,7 @@
 package com.example.user.bakingtime;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,8 +28,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class SingleRecepieActivity extends AppCompatActivity implements SingleRecepieFragment.StepSelected  {
-int type;
-    int position;
+String type;
+    String videoURL,description,thumbnail;
+    String id;
+    SharedPreferences preferences;
     Boolean from_tab;
     Bundle bundle;
     SingleRecepieFragment fragment;
@@ -29,118 +39,29 @@ int type;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        preferences=getSharedPreferences("none",MODE_PRIVATE);
          bundle = getIntent().getExtras();
-        type = bundle.getInt("recepie");
+        type = bundle.getString("id");
+
+
         if(findViewById(R.id.container_tab_single_rec)!=null){
-     //       Toast.makeText(SingleRecepieActivity.this,"ingg",Toast.LENGTH_SHORT).show();
             from_tab=true;
             SingleRecepieFragment singleRecepieFragment=new SingleRecepieFragment();
             Bundle bundle2=new Bundle();
-            bundle2.putInt("type",type);
+            bundle2.putString("type",type);
             bundle2.putBoolean("fromtab",from_tab);
             singleRecepieFragment.setArguments(bundle2);
             FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.container_tab_single_rec,singleRecepieFragment);
             transaction.commit();
-            /*try {
-                if(type==101) {
-                    JSONArray receipiearray = new JSONArray(loadJSONFromAsset());
-                    JSONObject object1 = receipiearray.getJSONObject(0);
-                    JSONArray arr=object1.getJSONArray("steps");
-                    JSONObject object=arr.getJSONObject(position);
 
-                    Bundle bundle1=new Bundle();
-                    bundle1.putString("description",object.getString("description"));
-                    bundle1.putString("videoURL",object.getString("videoURL"));
-                    StepDetailFragment stepDetailFragment=new StepDetailFragment();
-                    stepDetailFragment.setArguments(bundle);
-                    FragmentTransaction transaction1=getSupportFragmentManager().beginTransaction();
-                    transaction1.add(R.id.step_det_tab_container,stepDetailFragment);
-                    transaction1.commit();
-//                    stepSelected.onstepselected(position);
-  //                  intent.putExtra("description",object.getString("description"));
-    //                intent.putExtra("videoURL",object.getString("videoURL"));
-                    Log.e("yeahhhh",object.getString("description") +" " +object.getString("videoURL"));
-                }
-                if(type==102) {
-                    JSONArray receipiearray = new JSONArray(loadJSONFromAsset());
-                    JSONObject object1 = receipiearray.getJSONObject(2);
-                    JSONArray arr=object1.getJSONArray("steps");
-                    JSONObject object=arr.getJSONObject(position);
-                    Bundle bundle1=new Bundle();
-                    bundle1.putString("description",object.getString("description"));
-                    bundle1.putString("videoURL",object.getString("videoURL"));
-                    StepDetailFragment stepDetailFragment=new StepDetailFragment();
-                    stepDetailFragment.setArguments(bundle);
-                    FragmentTransaction transaction1=getSupportFragmentManager().beginTransaction();
-
-                    transaction1.add(R.id.step_det_tab_container,stepDetailFragment);
-                    transaction1.commit();
-
-//                    stepSelected.onstepselected(position);
-                    //                  intent.putExtra("description",object.getString("description"));
-                    //                intent.putExtra("videoURL",object.getString("videoURL"));
-                    Log.e("yeahhhh",object.getString("description") +" " +object.getString("videoURL"));
-                }
-                if(type==103) {
-                    JSONArray receipiearray = new JSONArray(loadJSONFromAsset());
-                    JSONObject object1 = receipiearray.getJSONObject(3);
-                    JSONArray arr=object1.getJSONArray("steps");
-                    JSONObject object=arr.getJSONObject(position);
-                    Bundle bundle1=new Bundle();
-                    bundle1.putString("description",object.getString("description"));
-                    bundle1.putString("videoURL",object.getString("videoURL"));
-                    StepDetailFragment stepDetailFragment=new StepDetailFragment();
-                    stepDetailFragment.setArguments(bundle);
-                    FragmentTransaction transaction1=getSupportFragmentManager().beginTransaction();
-
-                    transaction1.add(R.id.step_det_tab_container,stepDetailFragment);
-                    transaction1.commit();
-
-//                    stepSelected.onstepselected(position);
-                    //                  intent.putExtra("description",object.getString("description"));
-                    //                intent.putExtra("videoURL",object.getString("videoURL"));
-                    Log.e("yeahhhh",object.getString("description") +" " +object.getString("videoURL"));
-                }
-                if(type==104) {
-                    JSONArray receipiearray = new JSONArray(loadJSONFromAsset());
-                    JSONObject object1 = receipiearray.getJSONObject(4);
-                    JSONArray arr=object1.getJSONArray("steps");
-                    JSONObject object=arr.getJSONObject(position);
-                    Bundle bundle1=new Bundle();
-                    bundle1.putString("description",object.getString("description"));
-                    bundle1.putString("videoURL",object.getString("videoURL"));
-                    StepDetailFragment stepDetailFragment=new StepDetailFragment();
-                    stepDetailFragment.setArguments(bundle);
-                    FragmentTransaction transaction1=getSupportFragmentManager().beginTransaction();
-
-                    transaction1.add(R.id.step_det_tab_container,stepDetailFragment);
-                    transaction1.commit();
-
-//                    stepSelected.onstepselected(position);
-                    //                  intent.putExtra("description",object.getString("description"));
-                    //                intent.putExtra("videoURL",object.getString("videoURL"));
-                    Log.e("yeahhhh",object.getString("description") +" " +object.getString("videoURL"));
-                }
-
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }*/
-
-
-            //   stepSelected.onstepselected(position);
-                    //intent.putExtra("description",object.getString("description"));
-                    //intent.putExtra("videoURL",object.getString("videoURL"));
-                    //Log.e("yeahhhh",object.getString("description") +" " +object.getString("videoURL
 
         }
         else {
             from_tab=false;
 
             Bundle mbundle = new Bundle();
-            mbundle.putInt("type", type);
+            mbundle.putString("type", type);
             mbundle.putBoolean("from_tab",from_tab);
             fragment = new SingleRecepieFragment();
             fragment.setArguments(mbundle);
@@ -156,119 +77,72 @@ int type;
 
     @Override
     public void onstepselected(int position) {
-    //this.position=position;
-        Toast.makeText(SingleRecepieActivity.this,"called" +position,Toast.LENGTH_SHORT).show();
-        try {
-            if(type==101) {
-                JSONArray receipiearray = new JSONArray(loadJSONFromAsset());
-                JSONObject object1 = receipiearray.getJSONObject(0);
-                JSONArray arr=object1.getJSONArray("steps");
-                JSONObject object=arr.getJSONObject(position);
-                Bundle bundle1=new Bundle();
-                bundle1.putString("description",object.getString("description"));
-                bundle1.putString("videoURL",object.getString("videoURL"));
-                StepDetailFragment stepDetailFragment=new StepDetailFragment();
-                stepDetailFragment.setArguments(bundle1);
-                FragmentTransaction transaction1=getSupportFragmentManager().beginTransaction();
-                transaction1.replace(R.id.step_det_tab_container,stepDetailFragment);
-                transaction1.commit();
-//                    stepSelected.onstepselected(position);
-                //                  intent.putExtra("description",object.getString("description"));
-                //                intent.putExtra("videoURL",object.getString("videoURL"));
-                Log.e("yeahhhh",object.getString("description") +" " +object.getString("videoURL"));
-            }
-            if(type==102) {
-                JSONArray receipiearray = new JSONArray(loadJSONFromAsset());
-                JSONObject object1 = receipiearray.getJSONObject(1);
-                JSONArray arr=object1.getJSONArray("steps");
-                JSONObject object=arr.getJSONObject(position);
-                Bundle bundle1=new Bundle();
-                bundle1.putString("description",object.getString("description"));
-                bundle1.putString("videoURL",object.getString("videoURL"));
-                StepDetailFragment stepDetailFragment=new StepDetailFragment();
-                stepDetailFragment.setArguments(bundle1);
-                FragmentTransaction transaction1=getSupportFragmentManager().beginTransaction();
 
-                transaction1.replace(R.id.step_det_tab_container,stepDetailFragment);
-                transaction1.commit();
+        makeNetworkcall2(position);}
 
-//                    stepSelected.onstepselected(position);
-                //                  intent.putExtra("description",object.getString("description"));
-                //                intent.putExtra("videoURL",object.getString("videoURL"));
-                Log.e("yeahhhh",object.getString("description") +" " +object.getString("videoURL"));
-            }
-            if(type==103) {
-                JSONArray receipiearray = new JSONArray(loadJSONFromAsset());
-                JSONObject object1 = receipiearray.getJSONObject(2);
-                JSONArray arr=object1.getJSONArray("steps");
-                JSONObject object=arr.getJSONObject(position);
-                Bundle bundle1=new Bundle();
-                bundle1.putString("description",object.getString("description"));
-                bundle1.putString("videoURL",object.getString("videoURL"));
-                StepDetailFragment stepDetailFragment=new StepDetailFragment();
-                stepDetailFragment.setArguments(bundle1);
-                FragmentTransaction transaction1=getSupportFragmentManager().beginTransaction();
+    public  void makeNetworkcall2(final int position){
 
-                transaction1.replace(R.id.step_det_tab_container,stepDetailFragment);
-                transaction1.commit();
 
-//                    stepSelected.onstepselected(position);
-                //                  intent.putExtra("description",object.getString("description"));
-                //                intent.putExtra("videoURL",object.getString("videoURL"));
-                Log.e("yeahhhh",object.getString("description") +" " +object.getString("videoURL"));
-            }
-            if(type==104) {
-                JSONArray receipiearray = new JSONArray(loadJSONFromAsset());
-                JSONObject object1 = receipiearray.getJSONObject(3);
-                JSONArray arr=object1.getJSONArray("steps");
-                JSONObject object=arr.getJSONObject(position);
-                Bundle bundle1=new Bundle();
-                bundle1.putString("description",object.getString("description"));
-                bundle1.putString("videoURL",object.getString("videoURL"));
-                StepDetailFragment stepDetailFragment=new StepDetailFragment();
-                stepDetailFragment.setArguments(bundle1);
-                FragmentTransaction transaction1=getSupportFragmentManager().beginTransaction();
 
-                transaction1.replace(R.id.step_det_tab_container,stepDetailFragment);
-                transaction1.commit();
+        final RequestQueue queue = Volley.newRequestQueue(SingleRecepieActivity.this);
+        StringRequest request = new StringRequest(Request.Method.GET, NetworkUtils.RECIPIE_API, new Response.Listener<String>() {
+            @Override
+            public void onResponse(final String response) {
 
-//                    stepSelected.onstepselected(position);
-                //                  intent.putExtra("description",object.getString("description"));
-                //                intent.putExtra("videoURL",object.getString("videoURL"));
-                Log.e("yeahhhh",object.getString("description") +" " +object.getString("videoURL"));
+                try {
+                    JSONArray array=new JSONArray(response);
+                    for(int i=0;i<array.length();i++){
+                        JSONObject object=array.getJSONObject(i);
+                        String id=String.valueOf(object.getLong("id"));
+                        if(type.equals(id)){
+
+
+                            JSONArray steps=object.getJSONArray("steps");
+                            for(int j=0;j<steps.length();j++){
+                                if(j==position) {
+
+
+                                    JSONObject object1=steps.getJSONObject(position);
+                                    videoURL=object1.getString("videoURL");
+                                    description=object1.getString("description");
+                                    thumbnail=object.getString("thumbnailURL");
+                                }
+                            }
+
+
+
+                        }
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Bundle bundle=new Bundle();
+
+                bundle.putString("videoURL",videoURL);
+                bundle.putString("description",description);
+                bundle.putString("thumb",thumbnail);
+                StepDetailFragment fragment=new StepDetailFragment();
+                fragment.setArguments(bundle);
+                FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.step_det_tab_container,fragment);
+                transaction.commit();
+
+                queue.stop();
             }
 
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
 
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+                queue.stop();
+            }
+        });
+        queue.add(request);
 
     }
-    public String loadJSONFromAsset() {
-        String json = null;
-        try {
-
-            InputStream is = getAssets().open("generated.json");
-
-            int size = is.available();
-
-            byte[] buffer = new byte[size];
-
-            is.read(buffer);
-
-            is.close();
-
-            json = new String(buffer, "UTF-8");
 
 
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
-
-    }
 
 }
 

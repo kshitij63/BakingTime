@@ -25,12 +25,10 @@ import java.util.ArrayList;
 public class StepsAdapter extends ArrayAdapter<String> {
     ArrayList<String> steps_list;
     int type;
-    String load_json;
-    public StepsAdapter(@NonNull Context context, ArrayList<String> steps_list,int type,String load_json ) {
+    public StepsAdapter(@NonNull Context context, ArrayList<String> steps_list ) {
         super(context, R.layout.steps);
         this.steps_list=steps_list;
-        this.type=type;
-        this.load_json=load_json;
+
     }
 
     @NonNull
@@ -40,11 +38,6 @@ public class StepsAdapter extends ArrayAdapter<String> {
         if(view==null){
         view=    LayoutInflater.from(getContext()).inflate(R.layout.steps,parent,false);
         }
-     /*   view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-        });*/
         TextView view1=(TextView) view.findViewById(R.id.steps);
         view1.setText(steps_list.get(position));
         return view;
