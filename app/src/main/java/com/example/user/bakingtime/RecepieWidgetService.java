@@ -27,9 +27,12 @@ import java.util.ArrayList;
  */
 
 public class RecepieWidgetService extends RemoteViewsService {
+
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return new ListRemoteFactory(this.getApplicationContext());
+        Log.e("called","widgetservices" +intent.getStringArrayListExtra("yelo"));
+
+        return new ListRemoteFactory(this.getApplicationContext(),intent.getStringArrayListExtra("yelo"));
     }
 }
 
@@ -37,16 +40,16 @@ public class RecepieWidgetService extends RemoteViewsService {
 class ListRemoteFactory implements RemoteViewsService.RemoteViewsFactory{
 
 
-
     Context context;
     ArrayList<String> recep_lisst;
 
-    ListRemoteFactory(Context app){
+    ListRemoteFactory(Context app,ArrayList<String> recep_lisst){
         context=app;
+        this.recep_lisst=recep_lisst;
     }
     @Override
     public void onCreate() {
-
+        Log.e("called","oncreate");
     }
 
     @Override
@@ -54,45 +57,7 @@ class ListRemoteFactory implements RemoteViewsService.RemoteViewsFactory{
 
         //bar.setVisibility(View.VISIBLE);
 
-        recep_lisst=new ArrayList<>();
-        final RequestQueue queue = Volley.newRequestQueue(context);
-        StringRequest request = new StringRequest(Request.Method.GET, NetworkUtils.RECIPIE_API, new Response.Listener<String>() {
-            @Override
-            public void onResponse(final String response) {
-               // bar.setVisibility(View.INVISIBLE);
-                try {
-                    JSONArray array=new JSONArray(response);
-                    for(int i=0;i<array.length();i++){
-                        JSONObject object=array.getJSONObject(i);
-                        String dish=object.getString("name");
-                       // String url=object.getString("image");
-                        //Recepie recepie=new Recepie(url,dish);
-                        //    for_widget.add(dish);
 
-                        recep_lisst.add(dish);
-                    }
-                   // listView.setAdapter(new RecipieAdapter(MainActivity.this,main_list));
-
-//Bundle bundle=new Bundle();
-                    //                  bundle.putStringArrayList("widget_list",for_widget);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                queue.stop();
-            }
-
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-     //           bar.setVisibility(View.INVISIBLE);
-                //Toast.makeText(MainActivity.this,"error",Toast.LENGTH_SHORT).show();
-
-                queue.stop();
-            }
-        });
-        queue.add(request);
-        Log.e("har",recep_lisst.size()+"");
     }
 
 
@@ -109,12 +74,12 @@ class ListRemoteFactory implements RemoteViewsService.RemoteViewsFactory{
 
     @Override
     public RemoteViews getViewAt(int position) {
-        Log.e("har2",recep_lisst.size()+"");
+        Log.e("called",recep_lisst.size()+"");
 
         RemoteViews views=new RemoteViews(context.getPackageName(),R.layout.recepie_widget_provider);
         views.setTextViewText(R.id.name_widget,recep_lisst.get(position));
         Bundle extras = new Bundle();
-        extras.putLong("id",1);
+        extras.putLong("id",2);
         Intent fillInIntent = new Intent();
         fillInIntent.putExtras(extras);
         views.setOnClickFillInIntent(R.id.name_widget, fillInIntent);
