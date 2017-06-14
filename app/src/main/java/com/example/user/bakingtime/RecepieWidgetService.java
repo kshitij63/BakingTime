@@ -2,6 +2,7 @@ package com.example.user.bakingtime;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -39,13 +40,15 @@ public class RecepieWidgetService extends RemoteViewsService {
 
 class ListRemoteFactory implements RemoteViewsService.RemoteViewsFactory{
 
-
+SharedPreferences preferences;
     Context context;
     ArrayList<String> recep_lisst;
 
     ListRemoteFactory(Context app,ArrayList<String> recep_lisst){
         context=app;
         this.recep_lisst=recep_lisst;
+        preferences=context.getSharedPreferences("none",Context.MODE_PRIVATE);
+
     }
     @Override
     public void onCreate() {
@@ -79,7 +82,8 @@ class ListRemoteFactory implements RemoteViewsService.RemoteViewsFactory{
         RemoteViews views=new RemoteViews(context.getPackageName(),R.layout.recepie_widget_provider);
         views.setTextViewText(R.id.name_widget,recep_lisst.get(position));
         Bundle extras = new Bundle();
-        extras.putLong("id",2);
+        String name_m=preferences.getString(recep_lisst.get(position),"none");
+        extras.putString("id",name_m);
         Intent fillInIntent = new Intent();
         fillInIntent.putExtras(extras);
         views.setOnClickFillInIntent(R.id.name_widget, fillInIntent);

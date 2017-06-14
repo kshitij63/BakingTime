@@ -74,7 +74,7 @@ public class RecepieService extends IntentService {
                     AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
                     int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, RecepieWidgetProvider.class));
                     RecepieWidgetProvider.mymet(context,appWidgetManager,appWidgetIds,recep_lisst);
-
+appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds,R.id.list_widget);
                 } catch (JSONException e) {
                     Log.e("error try",e.getMessage());
                 }

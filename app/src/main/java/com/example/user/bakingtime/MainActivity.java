@@ -96,7 +96,10 @@ public class MainActivity extends AppCompatActivity{
                     for(int i=0;i<array.length();i++){
                         JSONObject object=array.getJSONObject(i);
                         String dish=object.getString("name");
+                        String id=String.valueOf(object.getLong("id"));
                         String url=object.getString("image");
+                        editor.putString(dish,id);
+                        editor.apply();
                         Recepie recepie=new Recepie(url,dish);
                     //    for_widget.add(dish);
 
