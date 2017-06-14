@@ -1,28 +1,22 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:background="@drawable/brownie"
     android:padding="@dimen/widget_margin">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/cheese"
+        android:id="@+id/cheese_widget"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
-        android:textColor="@color/colorWhite"
-        android:textStyle="bold|italic"
-        android:text="@string/last" />
+        android:textSize="40dp"
+        android:id="@+id/name_widget"
+        android:text="name"
+        android:layout_centerInParent="true"
+        android:textStyle="bold"
+        android:textColor="@color/colorBlack"/>
 
-    <TextView
-        android:id="@+id/recepie"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="8dp"
-        android:background="@drawable/rectangle"
-        android:text="@string/rece"
-        android:textColor="@color/colorWhite"
-        android:textSize="24sp"
-        android:textStyle="bold|italic" />
-
-</LinearLayout>
+</RelativeLayout>

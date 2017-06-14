@@ -1,8 +1,11 @@
 package com.example.user.bakingtime;
 
 import android.content.Context;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -25,23 +28,39 @@ public class IngredientActivity extends AppCompatActivity {
     ListView listView;
     String type;
     ProgressBar bar;
+    int index;
+    int size;
     ArrayList<String> Ingredient_List;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ingredient);
+
         bar=(ProgressBar) findViewById(R.id.bar);
         Bundle bundle=getIntent().getExtras();
         type=bundle.getString("id");
-        Toast.makeText(this,type,Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this,type,Toast.LENGTH_SHORT).show();
         listView=(ListView) findViewById(R.id.ingredient_list);
-        make_network_call(this);
+if(savedInstanceState!=null){
+    Ingredient_List=savedInstanceState.getStringArrayList("list");
+    size=savedInstanceState.getStringArrayList("list").size();
+    listView.setAdapter(new IngredientAdapter(this,savedInstanceState.getStringArrayList("list"),size));
+    listView.setSelectionFromTop(savedInstanceState.getInt("index"),0);
+}
+else {
+    Ingredient_List = new ArrayList<>();
+    make_network_call(this);
+}
+
+
+
+
     }
 
 
 
     public void make_network_call(final Context context) {
-        Ingredient_List=new ArrayList<>();
+
         bar.setVisibility(View.VISIBLE);
 
         final RequestQueue queue = Volley.newRequestQueue(context);
@@ -62,7 +81,7 @@ public class IngredientActivity extends AppCompatActivity {
 
                                 Ingredient_List.add(ingre);
                             }
-                            listView.setAdapter(new IngredientAdapter(IngredientActivity.this,Ingredient_List));
+                            listView.setAdapter(new IngredientAdapter(IngredientActivity.this,Ingredient_List,Ingredient_List.size()));
 
                         }
                     }
@@ -83,5 +102,12 @@ public class IngredientActivity extends AppCompatActivity {
             }
         });
         queue.add(request);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("index",listView.getFirstVisiblePosition());
+        outState.putStringArrayList("list",Ingredient_List);
     }
 }

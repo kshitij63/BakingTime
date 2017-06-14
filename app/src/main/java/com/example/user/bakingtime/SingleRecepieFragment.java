@@ -44,7 +44,7 @@ ProgressBar bar;
     boolean from_tab;
     String type;
     ArrayList<String> steps_list;
-    ArrayList<String> Ingredeint_list;
+    //ArrayList<String> Ingredeint_list;
     TextView textView;
     StepSelected stepSelected;
     String videoURL;
@@ -58,11 +58,18 @@ ProgressBar bar;
         type=getArguments().getString("type");
         bar=(ProgressBar) v.findViewById(R.id.bar);
         from_tab=getArguments().getBoolean("fromtab");
+        listView = (ListView) v.findViewById(R.id.step_list);
 
-        steps_list=new ArrayList<>();
-        Ingredeint_list=new ArrayList<>();
-        listView=(ListView) v.findViewById(R.id.step_list);
-        make_network_call(getActivity());
+        if(savedInstanceState!=null){
+    steps_list=savedInstanceState.getStringArrayList("list1");
+    listView.setAdapter(new StepsAdapter(getContext(),steps_list));
+    listView.setSelectionFromTop(savedInstanceState.getInt("index1"),0);
+}
+else {
+    steps_list = new ArrayList<>();
+    //Ingredeint_list = new ArrayList<>();
+    make_network_call(getActivity());
+}
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -216,5 +223,12 @@ steps_list.add(des);
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         stepSelected=(StepSelected)(activity);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putStringArrayList("list1",steps_list);
+        outState.putInt("index1",listView.getFirstVisiblePosition());
     }
 }

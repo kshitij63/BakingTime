@@ -39,7 +39,7 @@ public class RecipieAdapter extends ArrayAdapter<Recepie> {
         }
         TextView textView=(TextView) v.findViewById(R.id.text_re);
         ImageView imageView=(ImageView) v.findViewById(R.id.image_re);
-        Toast.makeText(getContext(),recepies.get(position).getName(),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(),recepies.get(position).getName(),Toast.LENGTH_SHORT).show();
         textView.setText(recepies.get(position).getName());
         if(recepies.get(position).getUrl()==null) {
             Picasso.with(getContext()).load(recepies.get(position).getUrl()).into(imageView);

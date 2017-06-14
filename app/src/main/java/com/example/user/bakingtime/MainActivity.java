@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity{
     ListView listView;
     ProgressBar bar;
     ArrayList<Recepie> main_list;
+    ArrayList<String> for_widget;
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
 
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         preferences=getSharedPreferences("none",MODE_PRIVATE);
         editor=preferences.edit();
-        bar=(ProgressBar) findViewById(R.id.bar);
+        bar=(ProgressBar) findViewById(R.id.bar);for_widget=new ArrayList<>();
 
         listView=(ListView) findViewById(R.id.main_grid);
             make_network_call(this);
@@ -66,8 +67,8 @@ public class MainActivity extends AppCompatActivity{
 
 
                 String name=main_list.get(position).getName();
-                editor.putString("current",String.valueOf(position+1));
-                editor.apply();
+                //editor.putString("current",String.valueOf(position+1));
+                //editor.apply();
                 Intent intent=new Intent(MainActivity.this,SingleRecepieActivity.class);
                 intent.putExtra("name",name);
                 intent.putExtra("id",String.valueOf(position+1));
@@ -97,10 +98,15 @@ public class MainActivity extends AppCompatActivity{
                         String dish=object.getString("name");
                         String url=object.getString("image");
                         Recepie recepie=new Recepie(url,dish);
+                    //    for_widget.add(dish);
 
                         main_list.add(recepie);
                     }
                     listView.setAdapter(new RecipieAdapter(MainActivity.this,main_list));
+
+//Bundle bundle=new Bundle();
+  //                  bundle.putStringArrayList("widget_list",for_widget);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

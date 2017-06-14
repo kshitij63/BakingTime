@@ -12,6 +12,7 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +50,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     int savedplayback;
     SimpleExoPlayer simpleExoPlayer;
     TextView textView;
+    ImageView view;
     String videoURL,deatil_description,thumbnail;
 
     @Nullable
@@ -56,7 +58,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v=LayoutInflater.from(getActivity()).inflate(R.layout.step_detail_fragment,container,false);
-
+view=(ImageView) v.findViewById(R.id.tnumb);
 //        Toast.makeText(getActivity(), "trtrtr", Toast.LENGTH_SHORT).show();
         videoURL=getArguments().getString("videoURL");
         deatil_description=getArguments().getString("description");
@@ -73,6 +75,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
 
             simpleExoPlayerView=(SimpleExoPlayerView) v.findViewById(R.id.exoplayer_view);
             if(thumbnail!=null) {
+                Picasso.with(getContext()).load(thumbnail).into(view);
 
                     Picasso.with(getActivity()).load(thumbnail).into(new Target() {
                         @Override
@@ -190,12 +193,27 @@ compat=new MediaSessionCompat(getActivity(),"mediasession_bake");
     }
 
     private void stop_player(){
-        simpleExoPlayer.stop();
-        simpleExoPlayer.release();
-        simpleExoPlayer=null;
+        if(simpleExoPlayer!=null) {
+            simpleExoPlayer.stop();
+            simpleExoPlayer.release();
+            simpleExoPlayer = null;
+        }
     }
 
 
+    @Override
+    public void onStop() {
+        super.onStop();
+    stop_player();
+        compat.setActive(false);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    stop_player();
+        compat.setActive(false);
+    }
 
     @Override
     public void onDestroyView() {
