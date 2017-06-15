@@ -30,11 +30,12 @@ import java.util.ArrayList;
 public class SingleRecepieActivity extends AppCompatActivity implements SingleRecepieFragment.StepSelected  {
 String type;
     String videoURL,description,thumbnail;
-    String id;
+    String id,name;
     SharedPreferences preferences;
     Boolean from_tab;
     Bundle bundle;
     SingleRecepieFragment fragment;
+    TextView name_of_recepie;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +43,7 @@ String type;
         preferences=getSharedPreferences("none",MODE_PRIVATE);
          bundle = getIntent().getExtras();
         type = bundle.getString("id");
+        name=bundle.getString("name");
 
 
         if(findViewById(R.id.container_tab_single_rec)!=null){
@@ -59,7 +61,8 @@ String type;
         }
         else {
             from_tab=false;
-
+            name_of_recepie=(TextView) findViewById(R.id.set_name_text);
+            name_of_recepie.setText(name);
             Bundle mbundle = new Bundle();
             mbundle.putString("type", type);
             mbundle.putBoolean("from_tab",from_tab);

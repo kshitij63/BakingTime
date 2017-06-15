@@ -7,6 +7,10 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 //import android.support.v7.widget.CardView;
@@ -47,20 +51,33 @@ public class MainActivity extends AppCompatActivity{
     ArrayList<String> for_widget;
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
+    @Nullable
+    private RecepieIdlingResource mIdlingResource;
 
-
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new RecepieIdlingResource();
+        }
+        return mIdlingResource;
+    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         preferences=getSharedPreferences("none",MODE_PRIVATE);
         editor=preferences.edit();
         bar=(ProgressBar) findViewById(R.id.bar);for_widget=new ArrayList<>();
 
         listView=(ListView) findViewById(R.id.main_grid);
-            make_network_call(this);
+        getIdlingResource();
+
+        myAsyncTask asyncTask=new myAsyncTask(mIdlingResource);
+        asyncTask.execute();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -77,7 +94,6 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-
     }
 
 
@@ -90,6 +106,7 @@ public class MainActivity extends AppCompatActivity{
         StringRequest request = new StringRequest(Request.Method.GET, NetworkUtils.RECIPIE_API, new Response.Listener<String>() {
             @Override
             public void onResponse(final String response) {
+
                 bar.setVisibility(View.INVISIBLE);
                 try {
                     JSONArray array=new JSONArray(response);
@@ -106,8 +123,10 @@ public class MainActivity extends AppCompatActivity{
                         main_list.add(recepie);
                     }
                     listView.setAdapter(new RecipieAdapter(MainActivity.this,main_list));
-
-//Bundle bundle=new Bundle();
+                    if (mIdlingResource != null) {
+                        mIdlingResource.setIdleState(true);
+                    }
+                    //Bundle bundle=new Bundle();
   //                  bundle.putStringArrayList("widget_list",for_widget);
 
                 } catch (JSONException e) {
@@ -126,6 +145,38 @@ public class MainActivity extends AppCompatActivity{
             }
         });
         queue.add(request);
+
+
+    }
+
+    public class myAsyncTask extends AsyncTask<Void,Void,Void>{
+        @Nullable RecepieIdlingResource resource;
+        myAsyncTask(@Nullable RecepieIdlingResource resource){
+            this.resource=resource;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            //super.onPreExecute();
+            if (resource != null) {
+                resource.setIdleState(false);
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            make_network_call(MainActivity.this);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+           // super.onPostExecute(aVoid);
+            if (resource != null) {
+                resource.setIdleState(true);
+            }
+        }
     }
 
 

@@ -5,8 +5,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/container_fragment_single_recepie"
     android:orientation="vertical"
     tools:context="com.example.user.bakingtime.SingleRecepieActivity">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:textColor="@color/colorAccent"
+        android:gravity="center"
+        android:text="NAME_OF"
+        android:id="@+id/set_name_text"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/container_fragment_single_recepie">
+
+    </LinearLayout>
 
 </LinearLayout>
