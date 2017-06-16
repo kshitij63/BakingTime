@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -222,6 +223,11 @@ compat=new MediaSessionCompat(getActivity(),"mediasession_bake");
         compat.setActive(false);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
 
     private class mySessionCallback extends MediaSessionCompat.Callback {
         @Override

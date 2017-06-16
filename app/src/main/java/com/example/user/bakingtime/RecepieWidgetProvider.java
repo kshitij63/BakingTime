@@ -18,6 +18,7 @@ import java.util.ArrayList;
  */
 public class RecepieWidgetProvider extends AppWidgetProvider {
 static ArrayList<String> name;
+    static ArrayList<String> ingre_name;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
@@ -26,13 +27,14 @@ static ArrayList<String> name;
   //      kame=name;
         RemoteViews views=null;
         Log.e("called","method");
-        if(name!=null){
+        if(name!=null && ingre_name!=null){
             Log.e("called","yeaaaaaaaaaaaah");
            // RemoteViews views=new RemoteViews(context.getPackageName(),R.layout.recepie_widget_provider);
              views = new RemoteViews(context.getPackageName(), R.layout.widget_listview);
             // Set the GridWidgetService intent to act as the adapter for the GridView
             Intent intent = new Intent(context, RecepieWidgetService.class);
             intent.putStringArrayListExtra("yelo",name);
+            intent.putStringArrayListExtra("yelo2",ingre_name);
             views.setRemoteAdapter(R.id.list_widget, intent);
             // Set the PlantDetailActivity intent to launch when clicked
             Intent appIntent = new Intent(context, IngredientActivity.class);
@@ -116,9 +118,10 @@ static ArrayList<String> name;
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
     }
 
-    public static void mymet(Context context,AppWidgetManager manager,int [] appid,ArrayList<String> sname){
+    public static void mymet(Context context,AppWidgetManager manager,int [] appid,ArrayList<String> sname,ArrayList<String> ingre_name_widgte){
 name=sname;
-        Log.e("called","mymet" +sname.size());
+        ingre_name=ingre_name_widgte;
+        Log.e("called_i","mymet" +sname.size()+" " +ingre_name_widgte.size());
 
         for (int appWidgetId : appid) {
             updateAppWidget(context, manager, appWidgetId);

@@ -33,7 +33,7 @@ public class RecepieWidgetService extends RemoteViewsService {
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
         Log.e("called","widgetservices" +intent.getStringArrayListExtra("yelo"));
 
-        return new ListRemoteFactory(this.getApplicationContext(),intent.getStringArrayListExtra("yelo"));
+        return new ListRemoteFactory(this.getApplicationContext(),intent.getStringArrayListExtra("yelo"),intent.getStringArrayListExtra("yelo2"));
     }
 }
 
@@ -43,10 +43,12 @@ class ListRemoteFactory implements RemoteViewsService.RemoteViewsFactory{
 SharedPreferences preferences;
     Context context;
     ArrayList<String> recep_lisst;
+    ArrayList<String> Ingre_imp;
 
-    ListRemoteFactory(Context app,ArrayList<String> recep_lisst){
+    ListRemoteFactory(Context app,ArrayList<String> recep_lisst,ArrayList<String> Ingre_imp){
         context=app;
         this.recep_lisst=recep_lisst;
+        this.Ingre_imp=Ingre_imp;
         preferences=context.getSharedPreferences("none",Context.MODE_PRIVATE);
 
     }
@@ -81,6 +83,7 @@ SharedPreferences preferences;
 
         RemoteViews views=new RemoteViews(context.getPackageName(),R.layout.recepie_widget_provider);
         views.setTextViewText(R.id.name_widget,recep_lisst.get(position));
+        views.setTextViewText(R.id.ingredient_widget,Ingre_imp.get(position));
         Bundle extras = new Bundle();
         String name_m=preferences.getString(recep_lisst.get(position),"none");
         extras.putString("id",name_m);

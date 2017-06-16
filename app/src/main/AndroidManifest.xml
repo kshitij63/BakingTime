@@ -23,7 +23,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".SingleRecepieActivity" />
-        <activity android:name=".IngredientActivity" />
+        <activity android:name=".IngredientActivity"
+            />
         <activity android:name=".StepDetailActivity" />
 
         <receiver android:name=".RecepieWidgetProvider">
