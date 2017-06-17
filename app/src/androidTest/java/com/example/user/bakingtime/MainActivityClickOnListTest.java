@@ -61,19 +61,15 @@ public class MainActivityClickOnListTest {
     @Before
     public void registerIdlingResource() {
         mIdlingResource = mActivityTestRule.getActivity().getIdlingResource();
-        // To prove that the test fails, omit this call:
-        Espresso.registerIdlingResources(mIdlingResource);
+          Espresso.registerIdlingResources(mIdlingResource);
     }
 
     @Test
     public void idlingResourceTest() {
-       // onData(anything()).inAdapterView(withId(R.id.main_grid)).atPosition(1).perform(click());
-//    onData(anything()).inAdapterView(withId(R.id.main_grid)).atPosition(0).perform(click());
-  //      onView(withId(R.id.set_name_text)).check(matches(withText("Nutella Pie")));
+
         onView(withId(R.id.main_grid))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(3, click()));
               onView(withId(R.id.set_name_text)).check(matches(withText("Cheesecake")));
-
     }
 
     @After

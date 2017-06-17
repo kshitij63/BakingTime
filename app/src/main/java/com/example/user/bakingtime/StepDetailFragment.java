@@ -76,7 +76,7 @@ view=(ImageView) v.findViewById(R.id.tnumb);
 
             simpleExoPlayerView=(SimpleExoPlayerView) v.findViewById(R.id.exoplayer_view);
             if(thumbnail!=null) {
-                Picasso.with(getContext()).load(thumbnail).into(view);
+                Picasso.with(getContext()).load(thumbnail).into(view); //image view is loaded here
 
                     Picasso.with(getActivity()).load(thumbnail).into(new Target() {
                         @Override
