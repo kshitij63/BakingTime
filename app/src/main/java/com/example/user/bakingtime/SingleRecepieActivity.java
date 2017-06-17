@@ -32,9 +32,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class SingleRecepieActivity extends AppCompatActivity implements SingleRecepieFragment.StepSelected  {
-String type;
+ public static String type,name;
     String videoURL,description,thumbnail;
-    String id,name;
+    String id;
     SharedPreferences preferences;
     Boolean from_tab;
     Bundle bundle;
@@ -55,6 +55,9 @@ String type;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        name_of_recepie=(TextView) findViewById(R.id.set_name_text);
+        name_of_recepie.setText(name);
+
         getIdlingResource();
         if (mIdlingResource != null) {
             mIdlingResource.setIdleState(false);
@@ -62,10 +65,17 @@ String type;
 
         preferences=getSharedPreferences("none",MODE_PRIVATE);
          bundle = getIntent().getExtras();
-        type = bundle.getString("id");
+        if(bundle!=null) {
+            type = bundle.getString("id");
 
-        name=bundle.getString("name");
-        name="Nutella Pie";
+//type="1";
+            name = bundle.getString("name");
+        }
+        else {
+            type="1";
+            name="Nutella Pie";
+        }
+        //name="Nutella Pie";
 
 
 
@@ -84,8 +94,6 @@ String type;
         }
         else {
             from_tab=false;
-            name_of_recepie=(TextView) findViewById(R.id.set_name_text);
-            name_of_recepie.setText(name);
             Bundle mbundle = new Bundle();
             mbundle.putString("type", type);
             mbundle.putBoolean("from_tab",from_tab);

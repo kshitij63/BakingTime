@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context="com.example.user.bakingtime.SingleRecepieActivity">
     <TextView
@@ -27,12 +27,12 @@
             android:indeterminate="true"
             android:visibility="invisible"
             android:id="@+id/bar"/>
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/step_list">
 
 
-    </ListView>
+    </android.support.v7.widget.RecyclerView>
     </RelativeLayout>
 </LinearLayout>

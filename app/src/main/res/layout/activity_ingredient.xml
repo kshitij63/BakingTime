@@ -13,12 +13,12 @@
         android:indeterminate="true"
         android:visibility="invisible"
         android:id="@+id/bar"/>
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:id="@+id/ingredient_list">
 
-    </ListView>
+    </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

@@ -11,9 +11,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.test.espresso.IdlingResource;
+//import android.support.v7.app.AlertController;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 //import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -45,8 +48,9 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity{
 
-    ListView listView;
+    RecyclerView listView;
     ProgressBar bar;
+    LinearLayoutManager manager;
     ArrayList<Recepie> main_list;
     ArrayList<String> for_widget;
     SharedPreferences preferences;
@@ -73,32 +77,34 @@ public class MainActivity extends AppCompatActivity{
         if (mIdlingResource != null) {
             mIdlingResource.setIdleState(false);
         }
- //mIdlingResource=new RecepieIdlingResource();
+
         preferences=getSharedPreferences("none",MODE_PRIVATE);
         editor=preferences.edit();
         bar=(ProgressBar) findViewById(R.id.bar);for_widget=new ArrayList<>();
-        listView=(ListView) findViewById(R.id.main_grid);
+      //  manager=new LinearLayoutManager(this);
+        listView=(RecyclerView) findViewById(R.id.main_grid);
+        manager=new LinearLayoutManager(this);
+        //listView.setLayoutManager(manager);
 
 
         //myAsyncTask asyncTask=new myAsyncTask();
         //asyncTask.execute();
         make_network_call(MainActivity.this);
+        //listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+           // @Override
+           // public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-
-                String name=main_list.get(position).getName();
+          //      String name=main_list.get(position).getName();
                 //editor.putString("current",String.valueOf(position+1));
                 //editor.apply();
-                Intent intent=new Intent(MainActivity.this,SingleRecepieActivity.class);
-                intent.putExtra("name",name);
-                intent.putExtra("id",String.valueOf(position+1));
-                startActivity(intent);
+            //    Intent intent=new Intent(MainActivity.this,SingleRecepieActivity.class);
+              //  intent.putExtra("name",name);
+               // intent.putExtra("id",String.valueOf(position+1));
+                //startActivity(intent);
 
-            }
-        });
+        //    }
+        //});
 
     }
 
@@ -131,7 +137,8 @@ public class MainActivity extends AppCompatActivity{
 
                         main_list.add(recepie);
                     }
-                    listView.setAdapter(new RecipieAdapter(MainActivity.this,main_list));
+                    listView.setLayoutManager(manager);
+                    listView.setAdapter(new RecepieRecycleAdapter(MainActivity.this,main_list));
                     if (mIdlingResource != null) {
                         mIdlingResource.setIdleState(true);
                     }

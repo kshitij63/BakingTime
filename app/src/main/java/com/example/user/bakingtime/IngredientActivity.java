@@ -7,6 +7,8 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -29,10 +31,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class IngredientActivity extends AppCompatActivity {
-    ListView listView;
+    RecyclerView listView;
+    LinearLayoutManager manager;
     String type;
     ProgressBar bar;
-    int index;
     int size;
     ArrayList<String> Ingredient_List;
     @Override
@@ -45,12 +47,14 @@ public class IngredientActivity extends AppCompatActivity {
         Bundle bundle=getIntent().getExtras();
         type=bundle.getString("id");
        // Toast.makeText(this,type,Toast.LENGTH_SHORT).show();
-        listView=(ListView) findViewById(R.id.ingredient_list);
+        listView=(RecyclerView) findViewById(R.id.ingredient_list);
+        manager=new LinearLayoutManager(this);
 if(savedInstanceState!=null){
     Ingredient_List=savedInstanceState.getStringArrayList("list");
-    size=savedInstanceState.getStringArrayList("list").size();
-    listView.setAdapter(new IngredientAdapter(this,savedInstanceState.getStringArrayList("list"),size));
-    listView.setSelectionFromTop(savedInstanceState.getInt("index"),0);
+   // size=savedInstanceState.getStringArrayList("list").size();
+    listView.setAdapter(new IngredientRecycleAdapter(this,savedInstanceState.getStringArrayList("list")));
+    listView.setLayoutManager(manager);
+    manager.scrollToPosition(savedInstanceState.getInt("index"));
 }
 else {
     Ingredient_List = new ArrayList<>();
@@ -86,7 +90,8 @@ else {
 
                                 Ingredient_List.add(ingre);
                             }
-                            listView.setAdapter(new IngredientAdapter(IngredientActivity.this,Ingredient_List,Ingredient_List.size()));
+                            listView.setLayoutManager(manager);
+                            listView.setAdapter(new IngredientRecycleAdapter(IngredientActivity.this,Ingredient_List));
 
                         }
                     }
@@ -112,7 +117,7 @@ else {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("index",listView.getFirstVisiblePosition());
+        outState.putInt("index",manager.findFirstVisibleItemPosition());
         outState.putStringArrayList("list",Ingredient_List);
     }
 

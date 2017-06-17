@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,17 +41,20 @@ public class SingleRecepieFragment extends Fragment {
 
 
 
-    ListView listView;
+    RecyclerView listView;
+    LinearLayoutManager manager;
 ProgressBar bar;
+
+
     boolean from_tab;
     String type;
     ArrayList<String> steps_list;
-    //ArrayList<String> Ingredeint_list;
+
     TextView textView;
     StepSelected stepSelected;
-    String videoURL;
-    String description;
-    String thumbnail;
+
+
+
 
     @Nullable
     @Override
@@ -59,32 +64,21 @@ ProgressBar bar;
         type=getArguments().getString("type");
         bar=(ProgressBar) v.findViewById(R.id.bar);
         from_tab=getArguments().getBoolean("fromtab");
-        listView = (ListView) v.findViewById(R.id.step_list);
+         listView = (RecyclerView) v.findViewById(R.id.step_list);
+        manager=new LinearLayoutManager(getContext());
 
         if(savedInstanceState!=null){
     steps_list=savedInstanceState.getStringArrayList("list1");
-    listView.setAdapter(new StepsAdapter(getContext(),steps_list));
-    listView.setSelectionFromTop(savedInstanceState.getInt("index1"),0);
-}
+    listView.setAdapter(new StepsRecycleAdapter(getContext(),steps_list,from_tab,stepSelected,type,bar));
+            listView.setLayoutManager(manager);
+
+manager.scrollToPosition(savedInstanceState.getInt("index1"));
+        }
 else {
     steps_list = new ArrayList<>();
-    //Ingredeint_list = new ArrayList<>();
+
     make_network_call(getActivity());
 }
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-if(from_tab==true){
-    stepSelected.onstepselected(position);
-}
-else{
-    Toast.makeText(getActivity(),"inelse " +position,Toast.LENGTH_LONG).show();
-    makeNetworkcall2(position);
-
-
-}
-
-            }});
         textView=(TextView) v.findViewById(R.id.ingre_textview);
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,7 +120,8 @@ if(resource!=null){
                                 String des=object1.getString("shortDescription");
 steps_list.add(des);
                             }
-                            listView.setAdapter(new StepsAdapter(getActivity(),steps_list));
+                            listView.setLayoutManager(manager);
+                            listView.setAdapter(new StepsRecycleAdapter(getActivity(),steps_list,from_tab,stepSelected,type,bar));
 
                         }
                     }
@@ -147,66 +142,6 @@ steps_list.add(des);
             }
         });
         queue.add(request);
-    }
-    public  void makeNetworkcall2(final int position){
-
-        bar
-                .setVisibility(View.VISIBLE);
-        final RequestQueue queue = Volley.newRequestQueue(getActivity());
-        StringRequest request = new StringRequest(Request.Method.GET, NetworkUtils.RECIPIE_API, new Response.Listener<String>() {
-            @Override
-            public void onResponse(final String response) {
-                bar.setVisibility(View.INVISIBLE);
-                try {
-                    JSONArray array=new JSONArray(response);
-                    for(int i=0;i<array.length();i++){
-                        JSONObject object=array.getJSONObject(i);
-                        String id=String.valueOf(object.getLong("id"));
-                        if(type.equals(id)){
-                            Toast.makeText(getActivity(),"got " +type,Toast.LENGTH_LONG).show();
-
-                            JSONArray steps=object.getJSONArray("steps");
-                            //JSONArray ingre=object.getJSONArray("ingredients");
-                            for(int j=0;j<steps.length();j++){
-                                if(j==position) {
-                                    Toast.makeText(getActivity(),"gotkk " +position +j,Toast.LENGTH_LONG).show();
-
-                                    JSONObject object1=steps.getJSONObject(position);
-                                    videoURL=object1.getString("videoURL");
-                                    description=object1.getString("description");
-                                    thumbnail=object.getString("thumbnailURL");
-                                }
-                            }
-
-
-
-                            }
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Intent intent=new Intent(getActivity(),StepDetailActivity.class);
-
-                intent.putExtra("videoURL",videoURL);
-                intent.putExtra("description",description);
-                intent.putExtra("thumb",thumbnail);
-                startActivity(intent);
-
-                queue.stop();
-            }
-
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                bar.setVisibility(View.INVISIBLE);
-                Toast.makeText(getActivity(),"error",Toast.LENGTH_SHORT).show();
-
-                queue.stop();
-            }
-        });
-        queue.add(request);
-
     }
 
 
@@ -235,6 +170,8 @@ steps_list.add(des);
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putStringArrayList("list1",steps_list);
-        outState.putInt("index1",listView.getFirstVisiblePosition());
+        outState.putInt("index1",manager.findFirstVisibleItemPosition());
+        //LinearLayoutManager manager;
     }
+
 }
