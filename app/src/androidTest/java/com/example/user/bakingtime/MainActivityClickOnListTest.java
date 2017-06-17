@@ -68,8 +68,8 @@ public class MainActivityClickOnListTest {
     public void idlingResourceTest() {
 
         onView(withId(R.id.main_grid))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(3, click()));
-              onView(withId(R.id.set_name_text)).check(matches(withText("Cheesecake")));
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+              onView(withId(R.id.set_name_text)).check(matches(withText("Nutella Pie")));
     }
 
     @After

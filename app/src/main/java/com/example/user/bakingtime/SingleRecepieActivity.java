@@ -55,8 +55,9 @@ public class SingleRecepieActivity extends AppCompatActivity implements SingleRe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-        name_of_recepie=(TextView) findViewById(R.id.set_name_text);
-        name_of_recepie.setText(name);
+        //Bundle bundle6=new Bundle();
+        //bundle6=getIntent().getExtras();
+
 
         getIdlingResource();
         if (mIdlingResource != null) {
@@ -70,6 +71,9 @@ public class SingleRecepieActivity extends AppCompatActivity implements SingleRe
 
 //type="1";
             name = bundle.getString("name");
+            name_of_recepie=(TextView) findViewById(R.id.set_name_text);
+            name_of_recepie.setText(bundle.getString("name"));
+
         }
         else {
             type="1";
