@@ -2,6 +2,10 @@ package com.example.user.bakingtime;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -36,14 +40,33 @@ String type;
     Bundle bundle;
     SingleRecepieFragment fragment;
     TextView name_of_recepie;
+    @Nullable
+    private RecepieIdlingResource mIdlingResource;
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new RecepieIdlingResource();
+            Log.e("heyu",mIdlingResource.isIdleNow() +"given memory");
+        }
+        return mIdlingResource;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        getIdlingResource();
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(false);
+        }
+
         preferences=getSharedPreferences("none",MODE_PRIVATE);
          bundle = getIntent().getExtras();
         type = bundle.getString("id");
+
         name=bundle.getString("name");
+        name="Nutella Pie";
+
 
 
         if(findViewById(R.id.container_tab_single_rec)!=null){
@@ -143,6 +166,10 @@ String type;
         });
         queue.add(request);
 
+    }
+
+    public RecepieIdlingResource getRecepieIdle(){
+        return mIdlingResource;
     }
 
 

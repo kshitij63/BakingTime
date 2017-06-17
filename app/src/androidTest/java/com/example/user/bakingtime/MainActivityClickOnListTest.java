@@ -43,12 +43,17 @@ import java.util.ArrayList;
  * Created by user on 6/13/2017.
  */
 @RunWith(AndroidJUnit4.class)
-public class MainActivityIdlingRecepieNameTest {
+public class MainActivityClickOnListTest {
+
+
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule =
             new ActivityTestRule<>(MainActivity.class);
 
+
     private IdlingResource mIdlingResource;
+
+
     @Before
     public void registerIdlingResource() {
         mIdlingResource = mActivityTestRule.getActivity().getIdlingResource();
@@ -59,16 +64,14 @@ public class MainActivityIdlingRecepieNameTest {
     @Test
     public void idlingResourceTest() {
        // onData(anything()).inAdapterView(withId(R.id.main_grid)).atPosition(1).perform(click());
-    onData(anything()).inAdapterView(withId(R.id.main_grid)).perform(click());
+    onData(anything()).inAdapterView(withId(R.id.main_grid)).atPosition(0).perform(click());
     }
     @After
     public void unregisterIdlingResource() {
         if (mIdlingResource != null) {
             Espresso.unregisterIdlingResources(mIdlingResource);
         }
+
     }
-
-
-
 
 }

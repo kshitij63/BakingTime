@@ -55,6 +55,7 @@ ProgressBar bar;
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v=LayoutInflater.from(getActivity()).inflate(R.layout.single_recepie_fragment,container,false);
+
         type=getArguments().getString("type");
         bar=(ProgressBar) v.findViewById(R.id.bar);
         from_tab=getArguments().getBoolean("fromtab");
@@ -104,8 +105,13 @@ else{
 
         final RequestQueue queue = Volley.newRequestQueue(context);
         StringRequest request = new StringRequest(Request.Method.GET, NetworkUtils.RECIPIE_API, new Response.Listener<String>() {
+
             @Override
             public void onResponse(final String response) {
+                RecepieIdlingResource resource=((SingleRecepieActivity ) getActivity()).getRecepieIdle();
+if(resource!=null){
+    resource.setIdleState(true);
+}
                 bar.setVisibility(View.INVISIBLE);
                 try {
                     JSONArray array=new JSONArray(response);

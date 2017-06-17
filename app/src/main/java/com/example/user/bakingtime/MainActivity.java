@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity{
     public IdlingResource getIdlingResource() {
         if (mIdlingResource == null) {
             mIdlingResource = new RecepieIdlingResource();
+            Log.e("heyu",mIdlingResource.isIdleNow() +"given memory");
         }
         return mIdlingResource;
     }
@@ -68,16 +69,21 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        getIdlingResource();
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(false);
+        }
+ //mIdlingResource=new RecepieIdlingResource();
         preferences=getSharedPreferences("none",MODE_PRIVATE);
         editor=preferences.edit();
         bar=(ProgressBar) findViewById(R.id.bar);for_widget=new ArrayList<>();
-
         listView=(ListView) findViewById(R.id.main_grid);
-        getIdlingResource();
 
-        myAsyncTask asyncTask=new myAsyncTask(mIdlingResource);
-        asyncTask.execute();
+
+        //myAsyncTask asyncTask=new myAsyncTask();
+        //asyncTask.execute();
+        make_network_call(MainActivity.this);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -106,6 +112,9 @@ public class MainActivity extends AppCompatActivity{
         StringRequest request = new StringRequest(Request.Method.GET, NetworkUtils.RECIPIE_API, new Response.Listener<String>() {
             @Override
             public void onResponse(final String response) {
+                if (mIdlingResource != null) {
+                    mIdlingResource.setIdleState(true);
+                }
 
                 bar.setVisibility(View.INVISIBLE);
                 try {
@@ -157,15 +166,14 @@ public class MainActivity extends AppCompatActivity{
 
         @Override
         protected void onPreExecute() {
+
+
             //super.onPreExecute();
-            if (resource != null) {
-                resource.setIdleState(false);
-            }
+
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            make_network_call(MainActivity.this);
 
             return null;
         }
